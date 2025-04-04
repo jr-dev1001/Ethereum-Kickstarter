@@ -1,0 +1,13 @@
+#myHeader{
+    border: 5px solid rgb(121, 181, 24);
+    color: brown;
+    text-align: center;
+    text-shadow: 2px 2px black;
+}
+.box{
+    background-color: wheat;
+    color: black;
+    border: 2px solid black;
+    margin: 20px;
+    padding: 20px;
+}
