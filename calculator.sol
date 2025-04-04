@@ -14,7 +14,7 @@ contract Calculator {
         return _a*_b;
     }
 
-    function division (uint _a, uint _b) public pure Greater(_a,_b) returns (uint){
+    function division (uint _a, uint _b) public pure zeroDivision(_a,_b) returns (uint){
         return  _a/_b;
     }
 
@@ -22,7 +22,7 @@ contract Calculator {
         return (addition(_a, _b), subtraction(_a, _b), multiplication(_a, _b), division(_a, _b));
     }
 
-    modifier Greater(uint _a, uint _b){
+    modifier zeroDivision(uint _a, uint _b){
         require(_b!=0, "Zero Division ERR occured");
         _;
     }
