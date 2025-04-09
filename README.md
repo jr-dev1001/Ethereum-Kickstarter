@@ -1,3 +1,3 @@
 ```solidity
-var s = "To be updated";
+string readme = "To be updated";
 ```
