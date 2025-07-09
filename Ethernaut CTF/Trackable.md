@@ -6,7 +6,7 @@
 📦 Solidity Snippet I learned: </br>
 
 ---
-### [Level Name - 0.Hello]
+### Level Name - 0.Hello
 
 ☢️ Vulnerability Concept:
 No actual vulnerability — this level is for setup, interaction, and basic Solidity understanding. It's about exploring and understanding the Ethernaut environment, ABI, and on-chain data.
@@ -34,7 +34,7 @@ function authenticate(string memory passkey) public {
 }
 ```
 ---
-### [Level Name - 1.Fallback]
+### Level Name - 1.Fallback
 
 ☢️ Vulnerability Concept:
 Misused `receive()` fallback function allows ownership transfer when certain conditions are met. Ownership logic is unintentionally duplicated in the fallback, creating a secondary path to become owner.
@@ -61,8 +61,9 @@ receive() external payable {
 }
 ```
 🧠 This showed me how fallback functions can be dangerous when they change critical contract state like ownership.
+
 ---
-### [Level Name - 2.Fallout]
+### Level Name - 2.Fallout
 
 ☢️ Vulnerability Concept:
 Incorrect constructor declaration in older Solidity versions — `Fal1out()` is just a public function, not a constructor, due to a typo. This allows anyone to call it after deployment and set themselves as the contract owner.
@@ -88,10 +89,32 @@ function Fal1out() public payable {
 }
 ```
 ---
+### Level Name - 3.CoinFlip
 
+☢️ Vulnerability Concept:
+Predictable randomness using `blockhash(block.number - 1)` — this value is deterministic and publicly accessible on-chain, making it possible to compute the same result as the contract and always win the flip.
+
+🛠️ Exploit Mechanism:
+1. The contract derives the "random" coin flip from `blockhash(block.number - 1)` divided by a known constant `FACTOR`
+2. This hash is available to all contracts, so an attacker contract can calculate the same result
+3. By predicting the flip outcome before calling `flip()`, you can win repeatedly
+
+🔁 Real-World Example:
+Multiple real DeFi and gaming contracts have been exploited due to on-chain randomness misuse (e.g., games using `block.timestamp`, `block.number`, or `blockhash()` for RNG).
+
+✍️ My Attack Summary (in 2-3 steps):
+1. Created an attack contract that reads `blockhash(block.number - 1)` and calculates the expected outcome using the same logic as `CoinFlip`
+2. Sent that guess to the target contract via `flip()`
+3. Won flips repeatedly by submitting the correct prediction every time
+
+📦 Solidity Snippet I learned:
+```solidity
+uint256 blockValue = uint256(blockhash(block.number - 1));
+uint256 coinFlip = blockValue / FACTOR;
+bool side = coinFlip == 1;
+```
 ---
-
-### [Level Name - 4.Telephone]
+### Level Name - 4.Telephone
 
 ☢️ Vulnerability Concept:
 Improper use of `tx.origin` for ownership authentication — leads to logic bypass when function is called via contract.
@@ -114,10 +137,9 @@ function attack() external {
 }
 ```
 ---
-### [Level Name - 5.Token]
+### Level Name - 5.Token
 
-
-🧠 Vulnerability Concept:
+☢️ Vulnerability Concept:
 Integer underflow — in Solidity <0.8.0, subtracting a larger number from a smaller one wraps around to a huge value. This breaks balance checks and allows attackers to gain unearned tokens.
 
 🛠️ Exploit Mechanism:
