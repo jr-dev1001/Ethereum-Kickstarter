@@ -164,3 +164,75 @@ balances[msg.sender] -= _value;
 balances[_to] += _value;
 ```
 ---
+### Level Name - 6.Delegation
+
+☢️  Vulnerability Concept:
+Misuse of `delegatecall` in fallback allows unauthorized execution of external contract logic in the caller’s storage context.
+
+🛠️ Exploit Mechanism:
+Send the function selector for `pwn()` directly to the `Delegation` contract. The fallback triggers, performing a `delegatecall` to `Delegate`, executing `pwn()` in the storage of `Delegation`, and setting `owner = msg.sender`.
+
+🔁 Real-World Example:
+Improper proxy setups or upgradeable contracts have suffered this — notably, the Parity Multisig Wallet hack (2017) where the delegate context overwrote critical storage.
+
+✍️ My Attack Summary (in 2-3 steps):
+1. Sent `0xdd365b8b` (`pwn()` selector) to `Delegation` from EOA
+2. `fallback()` was triggered → `delegatecall` to `Delegate.pwn()`
+3. Storage of `Delegation` updated → `owner = my EOA`
+
+📦 Solidity Snippet I learned:
+```solidity
+fallback() external {
+    (bool result,) = address(delegate).delegatecall(msg.data);
+}
+```
+---
+### Level Name - 7.Force
+
+☢️  Vulnerability Concept:
+A contract cannot prevent receiving Ether sent via `selfdestruct()`. This bypasses normal transfer logic, including `receive()` and `fallback()` functions.
+
+💡 How Ether Can Be Sent to a Contract:
+1. **During contract deployment**  
+   Using a `payable constructor`, you can send ETH to the contract at the time of deployment.
+2. **By receiving ETH through `receive()` or `fallback()`**  
+   The contract must implement these functions with the `payable` modifier to accept ETH directly via calls or transfers.
+3. **Using `selfdestruct(address)` from another contract** ✅  
+   Ether is forcefully sent to the target address when a contract self-destructs. This method **cannot be refused**, even if the target contract lacks payable functions.
+4. **(Advanced)** Set `block.coinbase = contractAddress`  
+   If the miner chooses your contract address as the block reward recipient, the block reward ETH is transferred there.
+
+
+🛠️ Exploit Mechanism:
+Deploy a contract with ETH and call `selfdestruct(payable(target))`. The ETH is forcefully transferred to the target contract's address, even if it has no payable functions or fallback.
+
+🔁 Real-World Example:
+Used in griefing or poisoning attacks — e.g., breaking logic in vaults or DeFi contracts that assume `address(this).balance == 0` or control over incoming funds.
+
+✍️ My Attack Summary (in 2-3 steps):
+1. Created and deployed a contract with a `payable` constructor and a `selfdestruct()` call targeting the Force contract.
+2. Funded the attack contract with ETH at deployment.
+3. Called `attack()` → triggered `selfdestruct()` → ETH forcibly sent to the Force contract.
+
+🧠 Why We Use `selfdestruct`:
+
+- **Bypasses contract logic**  
+  ETH is sent regardless of whether the contract has a payable function or not.
+- **Cannot be refused**  
+  The target contract has no way to prevent receiving Ether this way.
+- **Enables forced ETH injection**  
+  Useful in CTFs and real-world exploits where you want to “break” assumptions like `balance == 0` in contracts that seem ETH-proof.
+
+📦 Solidity Snippet I learned:
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract ForceAttack {
+    constructor () public payable {}
+    function attack(address payable _contract) public {
+        selfdestruct(_contract);
+    }
+}
+```
+---
