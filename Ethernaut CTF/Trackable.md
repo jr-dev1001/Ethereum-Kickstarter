@@ -236,8 +236,7 @@ contract ForceAttack {
 }
 ```
 ---
-### [Level Name]  
-Vault
+### Level Name -8.Vault  
 
 ☢️  Vulnerability Concept:  
 Solidity's `private` visibility does not prevent on-chain access. All contract storage, even private variables, is publicly accessible by anyone who knows the storage slot index.
