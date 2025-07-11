@@ -236,3 +236,30 @@ contract ForceAttack {
 }
 ```
 ---
+### [Level Name]  
+Vault
+
+☢️  Vulnerability Concept:  
+Solidity's `private` visibility does not prevent on-chain access. All contract storage, even private variables, is publicly accessible by anyone who knows the storage slot index.
+
+🛠️ Exploit Mechanism:  
+Use off-chain tooling (`web3.eth.getStorageAt`) to read the password stored in slot 1, then call `unlock(password)` from any EOA or contract. Solidity contracts cannot read another contract’s storage directly.
+
+🔁 Real-World Example:  
+Many contracts that store sensitive information (like admin secrets or cryptographic keys) have been compromised because of improper assumptions about `private` visibility in Solidity. Example: early DeFi wallets exposing private variables on-chain.
+
+✍️ My Attack Summary (in 2–3 steps):  
+1. Located the password in storage slot 1 using `web3.eth.getStorageAt(contractAddress, 1)`  
+2. Retrieved the password value from chain state using JavaScript/Web3 tools  
+3. Called `unlock(bytes32 password)` using the retrieved value → contract unlocked
+
+📦 Solidity Snippet I Learned:
+```solidity
+function unlock(bytes32 _password) public {
+    if (password == _password) {
+        locked = false;
+    }
+}
+
+```
+---
