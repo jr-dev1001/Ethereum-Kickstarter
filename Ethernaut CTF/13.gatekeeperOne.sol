@@ -69,7 +69,7 @@ contract GatekeeperOne {
 //
 // creating key => 
 /*
-bytes8 gatekey = bytes8(uint64(tx.origin) & 0xFFFFFFFF0000FFFF); //gate3 satisfies
+bytes8 gatekey = bytes8(uint64(uint160(tx.origin)) & 0xFFFFFFFF0000FFFF); //gate3 satisfies
 for (uint256 i =0; i<300; i++){
     uint256 totalGas = i+(8191*3);
     gatekeeper.enter{gas : totalGas}(gateKey);
