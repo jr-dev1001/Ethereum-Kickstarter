@@ -10,7 +10,7 @@ Here we get started with CTF with setup:
 
 | Date       | Ethernaut Challenges                 | Uniswap Learning                                     |       ✅❌     |
 | ---------- | ------------------------------------ | ---------------------------------------------------- |------------------
-| **Aug 4**  | 15. Naught Coin, 16. Preservation    | Uniswap jeiwan.net Part 1 (core idea)                |                 |
+| **Aug 4**  | 15. Naught Coin, 16. Preservation    | Uniswap jeiwan.net Part 1 (core idea)                |  done on 5th    |
 | **Aug 5**  | 17. Recovery, 18. Magic Number       | Uniswap jeiwan.net Part 2 (factory)                  |                 |
 | **Aug 6**  | 19. Alien Codex                      | Rareskills Uniswap Ch. 1–2 (overview, factory, pair) |                 |
 | **Aug 7**  | 20. Denial, 21. Shop                 | Rareskills Ch. 3 (swap logic)                        |                 |
@@ -25,3 +25,7 @@ Here we get started with CTF with setup:
 
 
 ---
+
+<img width="985" height="256" alt="image" src="https://github.com/user-attachments/assets/a967a8b6-85f2-4024-804e-aeb9149ae42b" />
+
+
