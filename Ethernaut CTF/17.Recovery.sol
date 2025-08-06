@@ -35,7 +35,7 @@ contract SimpleToken {
         selfdestruct(_to);
     }
 }
-
+/* reference => https://ethereum.stackexchange.com/questions/760/how-is-the-address-of-an-ethereum-contract-computed */
 //you can find the lost address of the contract via script using rlp and keccak modules
 // Or you can find via explorer with the help of transaction at deployment time.
 interface ISimpleToken {
